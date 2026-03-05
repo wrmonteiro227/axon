@@ -1,5 +1,5 @@
-const CACHE_NAME = 'axon-v1';
-const assets = ['/', '/index.html'];
+const CACHE_NAME = 'axon-v2';
+const assets = ['./', './index.html'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(assets)));
