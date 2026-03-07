@@ -13,73 +13,18 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        /* --- IDENTIDADE VISUAL AXON --- */
-        :root {
-            --dourado: #d4af37;
-            --preto-profundo: #050505;
-            --cinza-card: #111111;
-            --cinza-hover: #1a1a1a;
-        }
-
-        body {
-            background-color: var(--preto-profundo);
-            color: #e2e8f0;
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            overflow-x: hidden;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-
-        /* CONTROLE DE TELAS */
+        :root { --dourado: #d4af37; --preto-profundo: #050505; --cinza-card: #111111; }
+        body { background-color: var(--preto-profundo); color: #e2e8f0; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; user-select: none; -webkit-tap-highlight-color: transparent; padding-bottom: env(safe-area-inset-bottom); }
+        
         #tela-auth { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
         #tela-app { display: none; }
 
-        .barra-topo {
-            background-color: #000;
-            height: calc(70px + env(safe-area-inset-top));
-            padding-top: env(safe-area-inset-top);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 2px solid var(--dourado);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
+        .barra-topo { background-color: #000; height: calc(70px + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top); display: flex; align-items: center; justify-content: center; border-bottom: 2px solid var(--dourado); position: sticky; top: 0; z-index: 1000; }
+        .logo-axon { color: var(--dourado); font-weight: 900; font-size: 2rem; letter-spacing: 12px; text-transform: uppercase; }
 
-        .logo-axon {
-            color: var(--dourado);
-            font-weight: 900;
-            font-size: 2rem;
-            letter-spacing: 12px;
-            text-transform: uppercase;
-        }
-
-        .menu-abas {
-            display: flex;
-            justify-content: flex-start;
-            background: #0a0a0a;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
+        .menu-abas { display: flex; justify-content: flex-start; background: #0a0a0a; border-bottom: 1px solid rgba(212, 175, 55, 0.1); overflow-x: auto; scrollbar-width: none; }
         .menu-abas::-webkit-scrollbar { display: none; }
-
-        .item-aba {
-            padding: 15px 20px;
-            color: #555;
-            font-size: 0.7rem;
-            font-weight: bold;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: 0.3s;
-            border-bottom: 3px solid transparent;
-            white-space: nowrap;
-            background: none;
-            border: none;
-        }
+        .item-aba { padding: 15px 20px; color: #555; font-size: 0.7rem; font-weight: bold; letter-spacing: 1px; cursor: pointer; transition: 0.3s; border-bottom: 3px solid transparent; white-space: nowrap; background: none; border: none; }
         .item-aba.ativa { color: var(--dourado); border-bottom: 3px solid var(--dourado); }
 
         .secao-conteudo { display: none; animation: fadeIn 0.4s ease-out; }
@@ -91,59 +36,14 @@
         .resumo-label { color: #666; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
         .resumo-valor { color: var(--dourado); font-weight: 900; font-size: 1.1rem; }
 
-        .card-axon {
-            background: var(--cinza-card);
-            border: 1px solid rgba(212, 175, 55, 0.15);
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .titulo-lista {
-            color: var(--dourado);
-            font-size: 0.85rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center; gap: 12px;
-        }
-
-        .item-axon {
-            background: rgba(0,0,0,0.4);
-            border: 1px solid #222;
-            padding: 16px;
-            border-radius: 10px;
-            margin-bottom: 12px;
-            display: flex; justify-content: space-between; align-items: center;
-            transition: 0.3s;
-        }
-
-        .axon-input-group {
-            display: flex;
-            gap: 8px;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .axon-input {
-            background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; outline: none; font-size: 0.85rem; flex-grow: 1;
-        }
-
-        .btn-send {
-            background: var(--dourado);
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            width: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+        .card-axon { background: var(--cinza-card); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .titulo-lista { color: var(--dourado); font-size: 0.85rem; font-weight: bold; margin-bottom: 20px; text-transform: uppercase; display: flex; align-items: center; gap: 12px; }
+        .item-axon { background: rgba(0,0,0,0.4); border: 1px solid #222; padding: 16px; border-radius: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
+        .axon-input-group { display: flex; gap: 8px; width: 100%; margin-bottom: 10px; }
+        .axon-input { background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 8px; outline: none; font-size: 0.85rem; flex-grow: 1; }
+        .btn-send { background: var(--dourado); color: #000; border: none; border-radius: 8px; width: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .btn-send:active { transform: scale(0.9); }
+        .btn-premium { background: var(--dourado); color: #000; font-weight: 900; padding: 14px; border-radius: 8px; width: 100%; text-transform: uppercase; cursor: pointer; transition: 0.2s; border: none; }
 
         .badge { font-size: 0.65rem; font-weight: 800; padding: 4px 10px; border-radius: 5px; text-transform: uppercase; cursor: pointer; }
         .badge-pendente { background: rgba(212, 175, 55, 0.1); color: var(--dourado); border: 1px solid var(--dourado); }
@@ -159,8 +59,6 @@
         .balao-ideia { background: #0d0d0d; border: 1px solid #222; border-left: 4px solid var(--dourado); border-radius: 8px; margin-bottom: 20px; }
         .header-ideia { background: #151515; padding: 8px 15px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; border-radius: 8px 8px 0 0; }
         .corpo-ideia { padding: 15px; font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #d1d5db; white-space: pre-wrap; }
-
-        .btn-premium { background: var(--dourado); color: #000; font-weight: 900; padding: 14px; border-radius: 8px; width: 100%; text-transform: uppercase; cursor: pointer; transition: 0.2s; border: none; }
 
         @media (max-width: 768px) { .grid-resumo { grid-template-columns: 1fr; } .valor-acumulado { font-size: 2.2rem; } }
     </style>
@@ -197,14 +95,12 @@
         </nav>
 
         <main class="p-4 md:p-8 max-w-5xl mx-auto">
-
             <section id="aba-recebimentos" class="secao-conteudo ativa">
                 <div class="grid-resumo">
                     <div class="resumo-card"><div class="resumo-label">A Receber</div><div id="total-receber" class="resumo-valor">R$ 0,00</div></div>
                     <div class="resumo-card"><div class="resumo-label">Total Recebido</div><div id="total-receb-pago" class="resumo-valor" style="color: #10b981;">R$ 0,00</div></div>
                     <div class="resumo-card"><div class="resumo-label">Em Atraso</div><div id="total-receb-atraso" class="resumo-valor" style="color: #ef4444;">R$ 0,00</div></div>
                 </div>
-                
                 <div class="card-axon">
                     <h2 class="titulo-lista"><span>●</span> Registrar Devedor</h2>
                     <div class="axon-input-group"><input type="text" id="reg-nome" class="axon-input" placeholder="DEVEDOR:"></div>
@@ -216,12 +112,11 @@
                         </button>
                     </div>
                 </div>
-
                 <div class="card-axon">
                     <h2 class="titulo-lista"><span>●</span> Controle de Status</h2>
                     <div id="lista-status" class="mb-6"></div>
                     <div class="axon-input-group">
-                        <input type="text" id="input-update" class="axon-input" placeholder="Comando rápido (Ex: Raphael me pagou)">
+                        <input type="text" id="input-update" class="axon-input" placeholder="Comando rápido">
                         <button class="btn-send" onclick="processarComandoRapido('input-update', 'recebimento')">
                             <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.001.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/></svg>
                         </button>
@@ -246,15 +141,12 @@
                         </button>
                     </div>
                 </div>
-                <div class="card-axon">
-                    <h2 class="titulo-lista"><span>●</span> Controle de Status (Pagamentos)</h2>
-                    <div id="lista-status-pagamentos" class="mb-6"></div>
-                    <div class="axon-input-group">
-                        <input type="text" id="input-update-pag" class="axon-input" placeholder="Ex: Paguei o Aluguel">
-                        <button class="btn-send" onclick="processarComandoRapido('input-update-pag', 'pagamento')">
-                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.001.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/></svg>
-                        </button>
-                    </div>
+                <div id="lista-status-pagamentos" class="mb-6"></div>
+                <div class="axon-input-group">
+                    <input type="text" id="input-update-pag" class="axon-input" placeholder="Ex: Paguei o Aluguel">
+                    <button class="btn-send" onclick="processarComandoRapido('input-update-pag', 'pagamento')">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.001.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/></svg>
+                    </button>
                 </div>
             </section>
 
@@ -290,17 +182,14 @@
                         </button>
                     </div>
                 </div>
-                <div class="card-axon">
-                    <h2 class="titulo-lista"><span>●</span> HISTÓRICO DE CONSTRUÇÃO DE RIQUEZA</h2>
-                    <div id="lista-cofre" class="space-y-3"></div>
-                </div>
+                <div id="lista-cofre" class="space-y-3"></div>
             </section>
 
             <section id="aba-ideias" class="secao-conteudo">
                 <div class="card-axon">
                     <h2 class="titulo-lista"><span>●</span> Mural de Insights</h2>
                     <div class="axon-input-group">
-                        <textarea id="input-ideia" class="axon-input h-32" placeholder="Escreva sua ideia ou insight aqui..."></textarea>
+                        <textarea id="input-ideia" class="axon-input h-32" placeholder="Escreva sua ideia aqui..."></textarea>
                         <button class="btn-send" onclick="registrarIdeia()">
                             <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.001.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/></svg>
                         </button>
@@ -311,27 +200,22 @@
 
             <section id="aba-download" class="secao-conteudo">
                 <div class="card-axon text-center">
-                    <h2 class="titulo-lista"><span>●</span> Instalação AXON</h2>
+                    <h2 class="titulo-lista"><span>●</span> Instalar AXON</h2>
                     <button id="btnInstalar" class="btn-premium">ADICIONAR À TELA INICIAL</button>
                 </div>
             </section>
-
         </main>
     </div>
 
     <script>
-        // --- CONFIGURAÇÃO SUPABASE ---
         const SUPABASE_URL = 'https://zqvfnykxwlcozvawqgrn.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxdmZueWt4d2xjb3p2YXdxZ3JuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk3NDkzNDQsImV4cCI6MjA4NTMyNTM0NH0.CevpF9vP4748mb2vFNsOp5Kq6u7Nfp_100bJcW7ogUQ';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let userSession = null;
-
-        // --- LÓGICA DE AUTENTICAÇÃO ---
+        // --- AUTH ---
         async function verificarSessao() {
             const { data: { session } } = await _supabase.auth.getSession();
             if (session) {
-                userSession = session.user;
                 document.getElementById('tela-auth').style.display = 'none';
                 document.getElementById('tela-app').style.display = 'block';
                 carregarDados();
@@ -339,34 +223,25 @@
         }
 
         async function fazerLogin() {
-            const email = document.getElementById('auth-email').value;
-            const password = document.getElementById('auth-senha').value;
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-senha').value.trim();
             const { error } = await _supabase.auth.signInWithPassword({ email, password });
             if (error) document.getElementById('auth-erro').innerText = error.message;
             else verificarSessao();
         }
 
         async function fazerRegistro() {
-            const email = document.getElementById('auth-email').value;
-            const password = document.getElementById('auth-senha').value;
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-senha').value.trim();
+            if(!email || !password) { document.getElementById('auth-erro').innerText = "Preencha e-mail e senha."; return; }
             const { error } = await _supabase.auth.signUp({ email, password });
             if (error) document.getElementById('auth-erro').innerText = error.message;
-            else alert("Verifique seu e-mail para confirmar o registro!");
+            else alert("Registro realizado! Agora clique em ENTRAR.");
         }
 
-        async function fazerLogout() {
-            await _supabase.auth.signOut();
-            window.location.reload();
-        }
+        async function fazerLogout() { await _supabase.auth.signOut(); window.location.reload(); }
 
-        function abrirAba(idAba, botao) {
-            document.querySelectorAll('.secao-conteudo').forEach(s => s.classList.remove('ativa'));
-            document.querySelectorAll('.item-aba').forEach(b => b.classList.remove('ativa'));
-            document.getElementById(idAba).classList.add('ativa');
-            botao.classList.add('ativa');
-        }
-
-        // --- BANCO DE DADOS ---
+        // --- DASHBOARD ---
         let db_financeiro = [], db_cofre = [], db_tarefas = [], db_ideias = [];
 
         async function carregarDados() {
@@ -374,12 +249,15 @@
             const { data: cof } = await _supabase.from('cofre').select('*');
             const { data: tar } = await _supabase.from('tarefas').select('*');
             const { data: ide } = await _supabase.from('ideias').select('*');
-            
-            db_financeiro = fin || [];
-            db_cofre = cof || [];
-            db_tarefas = tar || [];
-            db_ideias = ide || [];
+            db_financeiro = fin || []; db_cofre = cof || []; db_tarefas = tar || []; db_ideias = ide || [];
             salvarTudo();
+        }
+
+        function abrirAba(idAba, botao) {
+            document.querySelectorAll('.secao-conteudo').forEach(s => s.classList.remove('ativa'));
+            document.querySelectorAll('.item-aba').forEach(b => b.classList.remove('ativa'));
+            document.getElementById(idAba).classList.add('ativa');
+            botao.classList.add('ativa');
         }
 
         function formatarDataHoje() { const hoje = new Date(); return `${String(hoje.getDate()).padStart(2, '0')}/${String(hoje.getMonth() + 1).padStart(2, '0')}/${hoje.getFullYear()}`; }
@@ -427,8 +305,7 @@
             if (item) {
                 const novoStatus = (item.status === 'pago' || item.status === 'feita') ? 'pendente' : (tabela === 'tarefas' ? 'feita' : 'pago');
                 await _supabase.from(tabela).update({ status: novoStatus }).eq('id', id);
-                item.status = novoStatus;
-                salvarTudo();
+                item.status = novoStatus; salvarTudo();
             }
         }
 
@@ -447,8 +324,7 @@
             if (n && v) { 
                 const novo = { id: Date.now(), nome: n, valor: v, data: tratarDataAxon(d), status: 'pendente', motivo_atraso: '', tipo: 'recebimento' };
                 await _supabase.from('financeiro').insert([novo]);
-                db_financeiro.push(novo);
-                salvarTudo(); 
+                db_financeiro.push(novo); salvarTudo(); 
                 ['reg-nome', 'reg-valor', 'reg-data'].forEach(i => document.getElementById(i).value = ''); 
             }
         }
@@ -458,8 +334,7 @@
             if (n && v) { 
                 const novo = { id: Date.now(), nome: n, valor: v, data: tratarDataAxon(d), status: 'pendente', motivo_atraso: '', tipo: 'pagamento' };
                 await _supabase.from('financeiro').insert([novo]);
-                db_financeiro.push(novo);
-                salvarTudo(); 
+                db_financeiro.push(novo); salvarTudo(); 
                 ['pag-nome', 'pag-valor', 'pag-data'].forEach(i => document.getElementById(i).value = ''); 
             }
         }
@@ -473,8 +348,7 @@
             if (match) nova = { id: Date.now(), nome: match[1].trim(), data: tratarDataAxon(match[2]), status: 'pendente', sem_prazo: false };
             else nova = { id: Date.now(), nome: texto, data: formatarDataHoje(), status: 'pendente', sem_prazo: true };
             await _supabase.from('tarefas').insert([nova]);
-            db_tarefas.push(nova);
-            el.value = ''; salvarTudo();
+            db_tarefas.push(nova); el.value = ''; salvarTudo();
         }
 
         async function registrarNoCofre() {
@@ -482,8 +356,7 @@
             if (v) { 
                 const novo = { id: Date.now(), valor: v, data: tratarDataAxon(d) };
                 await _supabase.from('cofre').insert([novo]);
-                db_cofre.push(novo);
-                salvarTudo(); 
+                db_cofre.push(novo); salvarTudo(); 
                 ['cofre-valor', 'cofre-data'].forEach(i => document.getElementById(i).value = ''); 
             }
         }
@@ -555,12 +428,7 @@
         // INSTALAÇÃO
         let promptInstalacao;
         window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); promptInstalacao = e; });
-        document.getElementById('btnInstalar').addEventListener('click', async () => {
-            if (!promptInstalacao) return;
-            promptInstalacao.prompt();
-            const { outcome } = await promptInstalacao.userChoice;
-            if (outcome === 'accepted') promptInstalacao = null;
-        });
+        document.getElementById('btnInstalar').addEventListener('click', async () => { if (promptInstalacao) { promptInstalacao.prompt(); const { outcome } = await promptInstalacao.userChoice; if (outcome === 'accepted') promptInstalacao = null; } });
 
         // INICIALIZAÇÃO
         verificarSessao();
