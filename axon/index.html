@@ -156,8 +156,9 @@
         .header-ideia { background: #151515; padding: 8px 15px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; border-radius: 8px 8px 0 0; }
         .corpo-ideia { padding: 15px; font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #d1d5db; white-space: pre-wrap; }
 
+        /* Estilo Botão Download */
         .btn-download-axon {
-            background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+            background: linear-gradient(45deg, #d4af37, #f1d592);
             color: #000;
             font-weight: 900;
             padding: 20px;
@@ -166,13 +167,7 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
-            transition: 0.3s;
-        }
-        .btn-download-axon:disabled {
-            background: #222;
-            color: #444;
-            box-shadow: none;
-            cursor: not-allowed;
+            display: none; /* Oculto por padrão, aparece via JS */
         }
 
         @media (max-width: 768px) { .grid-resumo { grid-template-columns: 1fr; } .valor-acumulado { font-size: 2.2rem; } }
@@ -306,46 +301,32 @@
 
         <section id="aba-download" class="secao-conteudo">
             <div class="card-axon text-center">
-                <h2 class="titulo-lista justify-center"><span>●</span> Versão Mobile</h2>
-                <p class="text-gray-400 text-sm mb-6">Instale o AXON na sua tela inicial para acesso instantâneo e experiência premium.</p>
-                <button id="btn-install" class="btn-download-axon" disabled onclick="instalarAxon()">
-                    Instalar AXON no Celular
+                <h2 class="titulo-lista"><span>●</span> Instalação AXON</h2>
+                <p class="text-sm text-gray-400 mb-6">Instale o AXON na sua tela inicial para ter a experiência completa de um Aplicativo Premium.</p>
+                
+                <button id="btn-instalar-axon" class="btn-download-axon" onclick="instalarPWA()">
+                    INSTALAR AXON AGORA
                 </button>
-                <p id="msg-install" class="text-[10px] text-gray-500 mt-4">Aguardando validação do sistema...</p>
+
+                <div id="msg-ios" class="text-left bg-black p-4 rounded-lg border border-gray-800 hidden">
+                    <p class="text-[10px] text-var(--dourado) font-bold mb-2">PARA IPHONE (IOS):</p>
+                    <p class="text-xs text-gray-400">1. Clique no ícone de <b>Compartilhar</b> <svg class="inline w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8m-16-4l4-4m0 0l4 4m-4-4v13"/></svg></p>
+                    <p class="text-xs text-gray-400">2. Role para baixo e selecione <b>"Tela de Início"</b>.</p>
+                </div>
+
+                <div id="msg-instalado" class="hidden">
+                    <p class="text-green-500 font-bold">O AXON já está instalado!</p>
+                </div>
             </div>
         </section>
 
     </main>
 
     <script>
-        // --- CONFIGURAÇÃO SUPABASE ---
-        const SUPABASE_URL = 'SUA_URL_AQUI';
-        const SUPABASE_KEY = 'SUA_ANON_KEY_AQUI';
+        // --- CONFIGURAÇÃO SUPABASE (INSIRA SEUS DADOS AQUI) ---
+        const SUPABASE_URL = 'https://zqvfnykxwlcozvawqgrn.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxdmZueWt4d2xjb3p2YXdxZ3JuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk3NDkzNDQsImV4cCI6MjA4NTMyNTM0NH0.CevpF9vP4748mb2vFNsOp5Kq6u7Nfp_100bJcW7ogUQ';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        // --- LÓGICA DE INSTALAÇÃO ---
-        let deferredPrompt;
-        const btnInstall = document.getElementById('btn-install');
-        const msgInstall = document.getElementById('msg-install');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            btnInstall.disabled = false;
-            msgInstall.innerText = "AXON pronto para instalação!";
-            msgInstall.style.color = "#d4af37";
-        });
-
-        async function instalarAxon() {
-            if (!deferredPrompt) return;
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                btnInstall.disabled = true;
-                msgInstall.innerText = "Instalado com sucesso!";
-            }
-            deferredPrompt = null;
-        }
 
         function abrirAba(idAba, botao) {
             document.querySelectorAll('.secao-conteudo').forEach(s => s.classList.remove('ativa'));
@@ -354,20 +335,23 @@
             botao.classList.add('ativa');
         }
 
-        let db_financeiro = [], db_cofre = [], db_tarefas = [], db_ideias = [];
+        // --- BANCO DE DADOS (CACHE LOCAL) ---
+        let db_financeiro = [];
+        let db_cofre = [];
+        let db_tarefas = [];
+        let db_ideias = [];
 
         async function carregarDados() {
-            try {
-                const { data: fin } = await _supabase.from('financeiro').select('*');
-                const { data: cof } = await _supabase.from('cofre').select('*');
-                const { data: tar } = await _supabase.from('tarefas').select('*');
-                const { data: ide } = await _supabase.from('ideias').select('*');
-                db_financeiro = fin || [];
-                db_cofre = cof || [];
-                db_tarefas = tar || [];
-                db_ideias = ide || [];
-                salvarTudo();
-            } catch (e) { console.error("Erro ao carregar:", e); }
+            const { data: fin } = await _supabase.from('financeiro').select('*');
+            const { data: cof } = await _supabase.from('cofre').select('*');
+            const { data: tar } = await _supabase.from('tarefas').select('*');
+            const { data: ide } = await _supabase.from('ideias').select('*');
+            
+            db_financeiro = fin || [];
+            db_cofre = cof || [];
+            db_tarefas = tar || [];
+            db_ideias = ide || [];
+            salvarTudo(); // Chamada para processar atrasos e renderizar
         }
 
         function formatarDataHoje() { const hoje = new Date(); return `${String(hoje.getDate()).padStart(2, '0')}/${String(hoje.getMonth() + 1).padStart(2, '0')}/${hoje.getFullYear()}`; }
@@ -442,7 +426,7 @@
         }
 
         async function registrarPagamento() {
-            const n = document.getElementById('pag-nome').value.trim(), v = document.getElementById('pag-valor').value.trim(), d = document.getElementById('pag-data').value.trim();
+            const n = document.getElementById('pag-nome').value.trim(), v = document.getElementById('pag-valor').value.trim(), d = document.getElementById('reg-data').value.trim();
             if (n && v) { 
                 const novo = { id: Date.now(), nome: n, valor: v, data: tratarDataAxon(d), status: 'pendente', motivo_atraso: '', tipo: 'pagamento' };
                 await _supabase.from('financeiro').insert([novo]);
@@ -540,6 +524,41 @@
             db_ideias.slice().sort((a,b) => b.id - a.id).forEach(i => { mural.innerHTML += `<div class="balao-ideia"><div class="header-ideia"><span style="font-size: 0.6rem; color: #666;">LOG: ${i.data}</span><div class="btn-lixeira" onclick="deletarItem('ideias', ${i.id})">🗑️</div></div><div class="corpo-ideia">${i.texto}</div></div>`; });
         }
 
+        // --- LÓGICA DE INSTALAÇÃO PWA ---
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const btnInstalar = document.getElementById('btn-instalar-axon');
+            if(btnInstalar) btnInstalar.style.display = 'block';
+        });
+
+        async function instalarPWA() {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                document.getElementById('btn-instalar-axon').style.display = 'none';
+                document.getElementById('msg-instalado').classList.remove('hidden');
+            }
+            deferredPrompt = null;
+        }
+
+        // Detecção de iOS para mostrar instrução manual
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
+        
+        window.addEventListener('load', () => {
+            if (isIOS && !isInStandaloneMode) {
+                document.getElementById('msg-ios').classList.remove('hidden');
+            } else if (isInStandaloneMode || window.matchMedia('(display-mode: standalone)').matches) {
+                document.getElementById('msg-instalado').classList.remove('hidden');
+                const btn = document.getElementById('btn-instalar-axon');
+                if(btn) btn.style.display = 'none';
+            }
+        });
+
+        // Inicialização
         carregarDados();
 
         if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); }); }
