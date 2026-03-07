@@ -1,5 +1,5 @@
 {
-  "name": "AXON - Gestão Premium",
+  "name": "AXON Gestão Premium",
   "short_name": "AXON",
   "start_url": "index.html",
   "display": "standalone",
@@ -7,15 +7,10 @@
   "theme_color": "#d4af37",
   "icons": [
     {
-      "src": "icon-192.168.png",
-      "sizes": "192x192",
+      "src": "https://cdn-icons-png.flaticon.com/512/5968/5968313.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
-    },
-    {
-      "src": "icon-512.512.png",
-      "sizes": "512x512",
-      "type": "image/png"
     }
   ]
 }
