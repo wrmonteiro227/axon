@@ -156,7 +156,6 @@
         .header-ideia { background: #151515; padding: 8px 15px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; border-radius: 8px 8px 0 0; }
         .corpo-ideia { padding: 15px; font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #d1d5db; white-space: pre-wrap; }
 
-        /* Estilo Botão Download */
         .btn-download-axon {
             background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
             color: #000;
@@ -308,12 +307,10 @@
         <section id="aba-download" class="secao-conteudo">
             <div class="card-axon text-center">
                 <h2 class="titulo-lista justify-center"><span>●</span> Versão Mobile</h2>
-                <p class="text-gray-400 text-sm mb-6">Instale o AXON na sua tela inicial para acesso instantâneo e experiência premium sem barras de navegador.</p>
-                
+                <p class="text-gray-400 text-sm mb-6">Instale o AXON na sua tela inicial para acesso instantâneo e experiência premium.</p>
                 <button id="btn-install" class="btn-download-axon" disabled onclick="instalarAxon()">
                     Instalar AXON no Celular
                 </button>
-                
                 <p id="msg-install" class="text-[10px] text-gray-500 mt-4">Aguardando validação do sistema...</p>
             </div>
         </section>
@@ -326,7 +323,7 @@
         const SUPABASE_KEY = 'SUA_ANON_KEY_AQUI';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // --- LÓGICA DE INSTALAÇÃO PWA ---
+        // --- LÓGICA DE INSTALAÇÃO ---
         let deferredPrompt;
         const btnInstall = document.getElementById('btn-install');
         const msgInstall = document.getElementById('msg-install');
@@ -335,7 +332,7 @@
             e.preventDefault();
             deferredPrompt = e;
             btnInstall.disabled = false;
-            msgInstall.innerText = "AXON pronto para ser instalado!";
+            msgInstall.innerText = "AXON pronto para instalação!";
             msgInstall.style.color = "#d4af37";
         });
 
@@ -345,7 +342,7 @@
             const { outcome } = await deferredPrompt.userChoice;
             if (outcome === 'accepted') {
                 btnInstall.disabled = true;
-                msgInstall.innerText = "Instalação iniciada!";
+                msgInstall.innerText = "Instalado com sucesso!";
             }
             deferredPrompt = null;
         }
@@ -357,23 +354,20 @@
             botao.classList.add('ativa');
         }
 
-        // --- BANCO DE DADOS (CACHE LOCAL) ---
-        let db_financeiro = [];
-        let db_cofre = [];
-        let db_tarefas = [];
-        let db_ideias = [];
+        let db_financeiro = [], db_cofre = [], db_tarefas = [], db_ideias = [];
 
         async function carregarDados() {
-            const { data: fin } = await _supabase.from('financeiro').select('*');
-            const { data: cof } = await _supabase.from('cofre').select('*');
-            const { data: tar } = await _supabase.from('tarefas').select('*');
-            const { data: ide } = await _supabase.from('ideias').select('*');
-            
-            db_financeiro = fin || [];
-            db_cofre = cof || [];
-            db_tarefas = tar || [];
-            db_ideias = ide || [];
-            salvarTudo();
+            try {
+                const { data: fin } = await _supabase.from('financeiro').select('*');
+                const { data: cof } = await _supabase.from('cofre').select('*');
+                const { data: tar } = await _supabase.from('tarefas').select('*');
+                const { data: ide } = await _supabase.from('ideias').select('*');
+                db_financeiro = fin || [];
+                db_cofre = cof || [];
+                db_tarefas = tar || [];
+                db_ideias = ide || [];
+                salvarTudo();
+            } catch (e) { console.error("Erro ao carregar:", e); }
         }
 
         function formatarDataHoje() { const hoje = new Date(); return `${String(hoje.getDate()).padStart(2, '0')}/${String(hoje.getMonth() + 1).padStart(2, '0')}/${hoje.getFullYear()}`; }
@@ -546,7 +540,6 @@
             db_ideias.slice().sort((a,b) => b.id - a.id).forEach(i => { mural.innerHTML += `<div class="balao-ideia"><div class="header-ideia"><span style="font-size: 0.6rem; color: #666;">LOG: ${i.data}</span><div class="btn-lixeira" onclick="deletarItem('ideias', ${i.id})">🗑️</div></div><div class="corpo-ideia">${i.texto}</div></div>`; });
         }
 
-        // Inicialização
         carregarDados();
 
         if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); }); }
